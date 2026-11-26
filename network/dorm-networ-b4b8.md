@@ -31,6 +31,27 @@
                 ├─ Access口 VLAN10 → 房间面板【内网口】（独立网线）
                 └─ Access口 VLAN20 → 房间面板【外网口】（独立网线）
 ```
+flowchart TD
+    A["公司内网专线<br/>(专线接入)"] --> GW["网关 WAN1/WAN2"]
+    B["电信外网宽带<br/>(光纤接入)"] --> GW
+    GW --> CORE["核心交换机<br/>VLAN10 内网｜VLAN20 外网"]
+
+    ACL["ACL双向阻断 VLAN10 ↔ VLAN20<br/>禁止VLAN间路由"]
+    CORE -.-> ACL
+
+    CORE --> POE1["POE接入交换机<br/>Trunk上联核心"]
+    POE1 --> AC["AC控制器"]
+    POE1 --> AP1["WiFi6吸顶AP<br/>Trunk单网线"]
+    AP1 --> SSID1["SSID‑内网 VLAN10"]
+    AP1 --> SSID2["SSID‑外网 VLAN20"]
+
+    CORE --> POE2["POE接入交换机<br/>Access端口模式"]
+    POE2 --> ACC1["Access口 VLAN10<br/>房间面板【内网口】独立网线"]
+    POE2 --> ACC2["Access口 VLAN20<br/>房间面板【外网口】独立网线"]
+
+    note["⚠️ 每房间2根独立网线回弱电间<br/>❌禁止房间私接小交换机"]
+
+
 # 厦杏摩托 宿舍楼弱电网络方案（B4~B8）
 > 文档用途：内部汇报PPT配套技术资料、弱电施工对接、AI检索调用
 > 楼栋清单
