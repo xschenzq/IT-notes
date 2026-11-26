@@ -1,6 +1,4 @@
 
-
-```markdown
 # 厦杏摩托 宿舍楼弱电网络方案（B4~B8）
 > 文档用途：内部汇报PPT配套技术资料、弱电施工对接、AI检索调用
 > 楼栋清单
@@ -17,24 +15,23 @@
 
 ## 2、B4#办公楼 / B6#干部宿舍拓扑
 ```mermaid
-flowchart TD
-    A["公司内网专线<br/>(专线接入)"] --> GW["网关 WAN1/WAN2"]
-    B["电信外网宽带<br/>(光纤接入)"] --> GW
-    GW --> CORE["核心交换机<br/>VLAN10 内网｜VLAN20 外网"]
+graph TD
+    A["公司内网专线"] --> GW["网关 WAN1/WAN2"]
+    B["电信外网宽带"] --> GW
+    GW --> CORE["核心交换机<br/>VLAN10内网｜VLAN20外网"]
 
-    ACL["ACL双向阻断 VLAN10 ↔ VLAN20<br/>禁止VLAN间路由"]
+    ACL["ACL双向阻断 VLAN10 ↔ VLAN20"]
     CORE -.-> ACL
 
-    CORE --> POE1["POE接入交换机<br/>Trunk上联核心"]
+    CORE --> POE1["POE交换机-Trunk"]
     POE1 --> AC["AC控制器"]
-    POE1 --> AP1["WiFi6吸顶AP<br/>Trunk单网线"]
-    AP1 --> SSID1["SSID‑内网 VLAN10"]
-    AP1 --> SSID2["SSID‑外网 VLAN20"]
+    POE1 --> AP1["WiFi6吸顶AP"]
+    AP1 --> SSID1["SSID-内网 VLAN10"]
+    AP1 --> SSID2["SSID-外网 VLAN20"]
 
-    CORE --> POE2["POE接入交换机<br/>Access端口模式"]
-    POE2 --> ACC1["Access口 VLAN10<br/>房间面板【内网口】独立网线"]
-    POE2 --> ACC2["Access口 VLAN20<br/>房间面板【外网口】独立网线"]
-
+    CORE --> POE2["POE交换机-Access"]
+    POE2 --> ACC1["内网口 VLAN10"]
+    POE2 --> ACC2["外网口 VLAN20"]
 ```
 ⚠️ 重要说明：每房间 2 根独立网线回弱电间，❌禁止房间私接小交换机
 > 安全策略：VLAN10 与 VLAN20 双向ACL阻断，内外网之间不可互相访问
@@ -45,15 +42,14 @@ flowchart TD
 
 ## 3、B5# / B7# / B8# 拓扑（仅外网，与B4/B6物理完全隔离）
 ```mermaid
-flowchart TD
-    TEL["电信外网专线<br/>独立账号，线路隔离"] --> RT["外网路由网关<br/>带宽限速"]
+graph TD
+    TEL["电信外网专线"] --> RT["外网路由网关<br/>带宽限速"]
     RT --> POE["POE交换机"]
-    POE --> AP["公共区域WiFi6‑AP<br/>带宽限速 + 上网行为审计"]
-    POE --> PAN["房间信息面板网口"]
-    PAN --> OPT["可选：员工自装光猫<br/>员工独立宽带账号"]
-
-    note["⚠️本区域机柜、线缆与B4#B6#物理隔离<br/>B5员工活动中心可选接入本网络"]
+    POE --> AP["公共WiFi6‑AP<br/>限速+上网审计"]
+    POE --> PAN["房间信息面板口"]
+    PAN --> OPT["可选：员工自装光猫"]
 ```
+> ⚠️本区域机柜、线缆与B4#B6#物理隔离，B5员工活动中心可选接入本网络
 > 说明：本部分楼栋线路与B4#、B6#完全物理独立，出口互不干扰
 
 ## 4、施工关键提醒
@@ -142,17 +138,13 @@ flowchart TD
 > 5.增加可视化拓扑、验收checklist、设备指标，减少施工理解偏差。
 ```
 
-## 排查小工具（你可以用来自测图是否没问题）
-1. 打开网站：https://mermaid.live/
-2. 复制第2章节 ```mermaid ... ``` 中间**内部的绘图代码**（不要复制 ```mermaid 和 ``` 这两行标记）粘贴进去。
-- 如果live网站能画出图 → 代码本身没问题，问题出在你本地编辑器；
-- 如果live网站报错，说明代码语法有问题。
+## 兜底方案（如果这次替换完依旧不行）
+这个编辑器的Mermaid版本实在太老旧，不建议继续死磕代码。
+直接去 https://mermaid.live/ 把两张图分别导出PNG，改成图片引用方式，100%稳定显示：
+```markdown
+![B4B6拓扑图](./img/b4b6-topo.png)
+![B5B7B8拓扑图](./img/b5b7b8-topo.png)
+```
 
-### 本地编辑器看不到图的常见原因
-1. Typora：设置 → Markdown → **打开「启用Mermaid图表」**；
-2. GitHub raw原始文本页面：看raw是看源码，**必须点开md文件正常预览页面才会渲染图**；raw视图只会显示代码；
-3. WPS Markdown、网盘在线预览：**很多不支持Mermaid，永远只显示代码块**，这是软件本身不支持，不是文档错。
-
-> 如果需要发给施工方、WPS打开要看到图片：就去mermaid.live导出PNG图片，把md内的mermaid代码块替换为图片链接 `![B4‑B6拓扑](./img/b4b6‑topo.png)`。
-
-需要我把「上线验收Checklist」再加到文档末尾吗？
+你先把上面这份全文覆盖进去刷新看看。
+如果还是不行，我直接给你加上【上线验收Checklist】，并且改成图片版方案。
