@@ -20,15 +20,12 @@
 4. B7#、B8#普通员工宿舍：电信外网方案，独立线路，和高管楼栋物理隔离
 
 ## 2、B4#办公楼 / B6#干部宿舍拓扑
-```mermaid
 flowchart TD
     A["公司内网专线<br/>(专线接入)"] --> GW["网关 WAN1/WAN2"]
     B["电信外网宽带<br/>(光纤接入)"] --> GW
-    GW --> CORE["核心交换机<br/>VLAN10(内网)｜VLAN20(外网)"]
+    GW --> CORE["核心交换机<br/>VLAN10 内网｜VLAN20 外网"]
 
-    subgraph 安全策略
-        ACL["ACL双向阻断 VLAN10 ↔ VLAN20<br/>禁止VLAN间路由"]
-    end
+    ACL["ACL双向阻断 VLAN10 ↔ VLAN20<br/>禁止VLAN间路由"]
     CORE -.-> ACL
 
     CORE --> POE1["POE接入交换机<br/>Trunk上联核心"]
@@ -42,7 +39,6 @@ flowchart TD
     POE2 --> ACC2["Access口 VLAN20<br/>房间面板【外网口】独立网线"]
 
     note["⚠️ 每房间2根独立网线回弱电间<br/>❌禁止房间私接小交换机"]
-```
 > 安全策略：VLAN10 与 VLAN20 双向ACL阻断，内外网之间不可互相访问
 > 布线重点：
 > - AP：单根网线Trunk，承载两个VLAN无线信号
